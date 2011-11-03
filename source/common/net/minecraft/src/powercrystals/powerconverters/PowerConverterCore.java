@@ -17,7 +17,7 @@ import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.8.1R1.1.0";
+	public static String version = "1.8.1R1.1.1";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	
@@ -49,11 +49,14 @@ public class PowerConverterCore
 	public static int lavaUnitCostInEU;
 	public static int euProducedPerLavaUnit;
 	
-	public static void init(String configPath)
+	public static IPCProxy proxy;
+	
+	public static void init(IPCProxy proxyParam)
 	{
+		proxy = proxyParam;
 		setupTextures();
 		
-		Configuration c = new Configuration(new File(configPath));
+		Configuration c = new Configuration(new File(proxy.getConfigPath()));
 		c.load();
 		powerConverterBlockId = c.getOrCreateBlockIdProperty("ID.PowerConverter", 190);
 		
@@ -68,7 +71,7 @@ public class PowerConverterCore
 		Property oilCostEUProperty = c.getOrCreateIntProperty("Scale.OilCostInEU", Configuration.GENERAL_PROPERTY, 50);
 		oilCostEUProperty.comment = "One oil bucket is worth 20,000 BC MJ; there are 1000 units per bucket. Using the above ratio of 2.5 EUs per MJ, one 20 MJ unit is worth 50 EUs.";
 		Property lavaCostEUProperty = c.getOrCreateIntProperty("Scale.LavaCostInEU", Configuration.GENERAL_PROPERTY, 20);
-		lavaCostEUProperty.comment = "One oil bucket is worth 2000 BC MJ; there are 1000 units per bucket. However, BC's lava is worth way less than it should compared to IC's - an IC lava bucket is 20k EU (20 EU per unit), but a BC lava bucket is only 5k EU (5 EU per unit). The number is thus set for IC lava, as it's more expensive.";
+		lavaCostEUProperty.comment = "One lava bucket is worth 2000 BC MJ; there are 1000 units per bucket. However, BC's lava is worth way less than it should compared to IC's - an IC lava bucket is 20k EU (20 EU per unit), but a BC lava bucket is only 5k EU (5 EU per unit). The number is thus set for IC lava, as it's more expensive.";
 		Property euProducedPerLavaUnitProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerLavaUnit", Configuration.GENERAL_PROPERTY, 20);
 		euProducedPerLavaUnitProperty.comment = "See comments on the lava unit cost property. This number should probably match that one, but this is for how much power the geo mk2 produces.";
 		

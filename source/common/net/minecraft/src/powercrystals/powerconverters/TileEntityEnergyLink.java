@@ -58,7 +58,7 @@ public class TileEntityEnergyLink extends TileEntityPowerConverter implements IE
 				PowerProvider pp = ((IPowerReceptor)te).getPowerProvider();
 				if(pp != null && pp.preConditions((IPowerReceptor)te) && pp.minEnergyReceived <= bcEnergyStored)
 				{
-					int energyUsed = Math.min(pp.maxEnergyReceived, bcEnergyStored);
+					int energyUsed = Math.min(Math.min(pp.maxEnergyReceived, bcEnergyStored), pp.maxEnergyStored - pp.energyStored);
 					pp.receiveEnergy(energyUsed);
 					storedEnergy -= energyUsed * PowerConverterCore.icToBCScaleDenominator / PowerConverterCore.icToBCScaleNumerator;
 				}

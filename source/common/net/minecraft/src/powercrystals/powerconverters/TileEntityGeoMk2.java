@@ -2,6 +2,7 @@ package net.minecraft.src.powercrystals.powerconverters;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
@@ -37,11 +38,23 @@ public class TileEntityGeoMk2 extends TileEntityPowerConverter implements ILiqui
 		return (te != null && (te instanceof ILiquidContainer || te instanceof IEnergyTile));
 	}
 	
+	// client, for network sync
+	public void setStoredLiquid(int quantity)
+	{
+		currentLiquidStored = quantity;
+	}
+	
 	// Base methods
+	
+	public Packet getDescriptionPacket()
+	{
+		return PowerConverterCore.proxy.getTileEntityPacket(this, new int[] { currentLiquidStored }, null, null);
+	}
 	
 	@Override
 	public void updateEntity()
 	{
+		super.updateEntity();
 		if(!isAddedToEnergyNet())
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
@@ -51,6 +64,10 @@ public class TileEntityGeoMk2 extends TileEntityPowerConverter implements ILiqui
 		{
 			worldObj.markBlocksDirty(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 			wasActive = isActive();
+			if(PowerConverterCore.proxy.isServer())
+			{
+				PowerConverterCore.proxy.sendTileEntityPacket(this);
+			}
 		}
 		
 		int pulseSize = PowerConverterCore.euProducedPerLavaUnit;

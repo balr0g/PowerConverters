@@ -2,13 +2,15 @@ package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.forge.MinecraftForgeClient;
+import net.minecraft.src.powercrystals.powerconverters.IPCProxy;
 import net.minecraft.src.powercrystals.powerconverters.PowerConverterCore;
+import net.minecraft.src.powercrystals.powerconverters.TileEntityGeoMk2;
 
 public class mod_PowerConverters extends BaseModMp
 {
 	public mod_PowerConverters()
 	{
-		PowerConverterCore.init(Minecraft.getMinecraftDir() + "/config/PowerConverters.cfg");
+		PowerConverterCore.init(new ClientProxy());
 		
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 0), "Engine Generator (LV)");
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 1), "Engine Generator (MV)");
@@ -33,5 +35,54 @@ public class mod_PowerConverters extends BaseModMp
 		MinecraftForgeClient.preloadTexture(PowerConverterCore.terrainTexture);
 		
 		ModLoaderMp.Init();
+	}
+	
+	@Override
+	public void HandleTileEntityPacket(int x, int y, int z, int l, int ai[], float af[], String as[])
+	{
+		World w = ModLoader.getMinecraftInstance().theWorld;
+		TileEntity te = w.getBlockTileEntity(x, y, z);
+		if(te != null && te instanceof TileEntityGeoMk2)
+		{
+			((TileEntityGeoMk2)te).setStoredLiquid(ai[0]);
+			w.markBlocksDirty(x, y, z, x, y, z);
+		}
+	}
+	
+	public class ClientProxy implements IPCProxy
+	{
+		@Override
+		public String getConfigPath()
+		{
+			return Minecraft.getMinecraftDir() + "/config/PowerConverters.cfg";
+		}
+
+		@Override
+		public void sendPacketToAll(Packet230ModLoader packet)
+		{
+		}
+
+		@Override
+		public boolean isServer()
+		{
+			return false;
+		}
+
+		@Override
+		public Packet230ModLoader getTileEntityPacket(TileEntity te, int[] dataInt, float[] dataFloat, String[] dataString)
+		{
+			return null;
+		}
+
+		@Override
+		public boolean isClient(World world)
+		{
+			return world.multiplayerWorld;
+		}
+
+		@Override
+		public void sendTileEntityPacket(TileEntity te)
+		{
+		}
 	}
 }
