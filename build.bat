@@ -7,7 +7,7 @@ set CLEANSRC=%MCP%\src-dev
 set PROJBASE=%USERPROFILE%\Mod Stuff\Power Converters
 set SPRITEFOLDER=PowerConverterSprites
 set MODNAME=PowerConverters
-set MODVERSION=1.0.4
+set MODVERSION=1.1.0
 
 set ZIPPATH=%USERPROFILE%\Mod Stuff\zip.exe
 
@@ -50,19 +50,11 @@ rmdir /s /q "%RELEASESERVER%\%SPRITEFOLDER%\terrain"
 cd "%RELEASECLIENT%"
 rmdir /s /q net
 rmdir /s /q buildcraft
-del /s /f /q BuildCraftCore.class
-del /s /f /q BuildCraftEnergy.class
-del /s /f /q BuildCraftFactory.class
-del /s /f /q BuildCraftTransport.class
 del /s /f /q mod_IC2.class
 "%ZIPPATH%" -r -q "%RELEASEBASE%\%MODNAME%_Client_%MODVERSION%.zip" *
 cd "%RELEASESERVER%"
 rmdir /s /q net
 rmdir /s /q buildcraft
-del /s /f /q BuildCraftCore.class
-del /s /f /q BuildCraftEnergy.class
-del /s /f /q BuildCraftFactory.class
-del /s /f /q BuildCraftTransport.class
 del /s /f /q mod_IC2.class
 "%ZIPPATH%" -r -q "%RELEASEBASE%\%MODNAME%_Server_%MODVERSION%.zip" *
 

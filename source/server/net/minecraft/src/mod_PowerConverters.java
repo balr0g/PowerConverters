@@ -12,7 +12,7 @@ public class mod_PowerConverters extends BaseModMp
 	@Override
 	public String Version()
 	{
-		return "1.8.1R1.0.4";
+		return PowerConverterCore.version;
 	}
 	
 	@Override

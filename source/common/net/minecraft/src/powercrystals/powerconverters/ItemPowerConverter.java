@@ -24,7 +24,7 @@ public class ItemPowerConverter extends ItemBlock
 	
 	public int getIconFromDamage(int i)
 	{
-		return Math.min(i, 4);
+		return 0;
 	}
 	
 	public String getItemNameIS(ItemStack itemstack)
@@ -35,6 +35,8 @@ public class ItemPowerConverter extends ItemBlock
 		if(md == 2) return "engineGeneratorHV";
 		if(md == 3) return "oilFabricator";
 		if(md == 4) return "energyLink";
-		return "energyLink";
+		if(md == 5) return "lavaFabricator";
+		if(md == 6) return "geoMk2";
+		return "geoMk2";
 	}
 }

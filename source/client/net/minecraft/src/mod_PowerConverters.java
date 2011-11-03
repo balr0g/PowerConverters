@@ -15,12 +15,14 @@ public class mod_PowerConverters extends BaseModMp
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 2), "Engine Generator (HV)");
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 3), "Oil Fabricator");
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 4), "Energy Link");
+		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 5), "Lava Fabricator");
+		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 6), "Geothermal Generator Mk. 2");
 	}
 	
 	@Override
 	public String Version()
 	{
-		return "1.8.1R1.0.4";
+		return PowerConverterCore.version;
 	}
 	
 	@Override
