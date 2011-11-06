@@ -38,12 +38,12 @@ xcopy /y /e /q "%MCP%\reobf\minecraft\*" "%RELEASECLIENT%\" > NUL
 xcopy /y /e /q "%MCP%\reobf\minecraft_server\*" "%RELEASESERVER%\" > NUL
 
 xcopy /y /e /q "%PROJBASE%\sprites\terrain_0.png" "%RELEASECLIENT%\%SPRITEFOLDER%" > NUL
-REM xcopy /y /e /q "%PROJBASE%\sprites\items.png" "%RELEASECLIENT%\%SPRITEFOLDER%" > NUL
+xcopy /y /e /q "%PROJBASE%\sprites\items.png" "%RELEASECLIENT%\%SPRITEFOLDER%" > NUL
 rmdir "%RELEASECLIENT%\%SPRITEFOLDER%\items"
 rmdir "%RELEASECLIENT%\%SPRITEFOLDER%\terrain"
 
 xcopy /y /e /q "%PROJBASE%\sprites\terrain_0.png" "%RELEASESERVER%\%SPRITEFOLDER%" > NUL
-REM xcopy /y /e /q "%PROJBASE%\sprites\items.png" "%RELEASESERVER%\%SPRITEFOLDER%" > NUL
+xcopy /y /e /q "%PROJBASE%\sprites\items.png" "%RELEASESERVER%\%SPRITEFOLDER%" > NUL
 rmdir /s /q "%RELEASESERVER%\%SPRITEFOLDER%\items"
 rmdir /s /q "%RELEASESERVER%\%SPRITEFOLDER%\terrain"
 

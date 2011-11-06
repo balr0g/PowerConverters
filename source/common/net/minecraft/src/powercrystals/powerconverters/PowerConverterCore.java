@@ -20,6 +20,7 @@ public class PowerConverterCore
 	public static String version = "1.8.1R1.2.0";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
+	public static String itemTexture = "/PowerConverterSprites/items_0.png";
 	
 	public static Block powerConverterBlock;
 	
@@ -28,21 +29,21 @@ public class PowerConverterCore
 	public static Property powerConverterBlockId;
 	public static Property jetpackFuellerItemId;
 	
-	public static int defaultTopTexture = 0;
-	public static int defaultBottomTexture = 1;
-	public static int engineGeneratorLVSideTexture = 2;
-	public static int engineGeneratorMVSideTexture = 3;
-	public static int engineGeneratorHVSideTexture = 4;
-	public static int oilFabricatorSideTexture = 5;
-	public static int energyLinkSideTexture = 6;
-	public static int energyLinkSideConnectedTexture = 7;
-	public static int lavaFabricatorSideTexture = 8;
-	public static int geoMk2SideTexture_Off_Disconnected = 9;
-	public static int geoMk2SideTexture_Off_Connected = 10;
-	public static int geoMk2SideTexture_On_Disconnected = 11;
-	public static int geoMk2SideTexture_On_Connected = 12;
-	public static int geoMk2TopTexture_Off = 13;
-	public static int geoMk2TopTexture_On = 14;
+	public static int textureOffsetEngineGeneratorLV = 6;
+	public static int textureOffsetEngineGeneratorMV = 12;
+	public static int textureOffsetEngineGeneratorHV = 18;
+	public static int textureOffsetOilFabricator = 24;
+	public static int textureOffsetEnergyLinkDisconnected = 30;
+	public static int textureOffsetEnergyLinkConnected = 36;
+	public static int textureOffsetLavaFabricator = 42;
+	public static int textureOffsetGeomk2OffDisconnected = 48;
+	public static int textureOffsetGeomk2OffConnected = 54;
+	public static int textureOffsetGeomk2OnDisconnected = 60;
+	public static int textureOffsetGeomk2OnConnected = 66;
+	public static int textureOffsetWaterStrainerOffDisconnected = 72;
+	public static int textureOffsetWaterStrainerOffConnected = 78;
+	public static int textureOffsetWaterStrainerOnDisconnected = 84;
+	public static int textureOffsetWaterStrainerOnConnected = 90;
 	
 	public static int bcToICScaleNumerator;
 	public static int bcToICScaleDenominator;
@@ -59,7 +60,6 @@ public class PowerConverterCore
 	public static void init(IPCProxy proxyParam)
 	{
 		proxy = proxyParam;
-		setupTextures();
 		
 		Configuration c = new Configuration(new File(proxy.getConfigPath()));
 		c.load();
@@ -185,58 +185,6 @@ public class PowerConverterCore
 				BuildCraftFactory.tankBlock
 			}
 		);
-	}
-	
-	private static void setupTextures()
-	{
-		BlockPowerConverter.textures[0][0] = defaultBottomTexture;
-		BlockPowerConverter.textures[1][0] = defaultTopTexture;
-		BlockPowerConverter.textures[2][0] = engineGeneratorLVSideTexture;
-		BlockPowerConverter.textures[3][0] = engineGeneratorLVSideTexture;
-		BlockPowerConverter.textures[4][0] = engineGeneratorLVSideTexture;
-		BlockPowerConverter.textures[5][0] = engineGeneratorLVSideTexture;
-
-		BlockPowerConverter.textures[0][1] = defaultBottomTexture;
-		BlockPowerConverter.textures[1][1] = defaultTopTexture;
-		BlockPowerConverter.textures[2][1] = engineGeneratorMVSideTexture;
-		BlockPowerConverter.textures[3][1] = engineGeneratorMVSideTexture;
-		BlockPowerConverter.textures[4][1] = engineGeneratorMVSideTexture;
-		BlockPowerConverter.textures[5][1] = engineGeneratorMVSideTexture;
-
-		BlockPowerConverter.textures[0][2] = defaultBottomTexture;
-		BlockPowerConverter.textures[1][2] = defaultTopTexture;
-		BlockPowerConverter.textures[2][2] = engineGeneratorHVSideTexture;
-		BlockPowerConverter.textures[3][2] = engineGeneratorHVSideTexture;
-		BlockPowerConverter.textures[4][2] = engineGeneratorHVSideTexture;
-		BlockPowerConverter.textures[5][2] = engineGeneratorHVSideTexture;
-
-		BlockPowerConverter.textures[0][3] = defaultBottomTexture;
-		BlockPowerConverter.textures[1][3] = defaultTopTexture;
-		BlockPowerConverter.textures[2][3] = oilFabricatorSideTexture;
-		BlockPowerConverter.textures[3][3] = oilFabricatorSideTexture;
-		BlockPowerConverter.textures[4][3] = oilFabricatorSideTexture;
-		BlockPowerConverter.textures[5][3] = oilFabricatorSideTexture;
-
-		BlockPowerConverter.textures[0][4] = energyLinkSideTexture;
-		BlockPowerConverter.textures[1][4] = energyLinkSideTexture;
-		BlockPowerConverter.textures[2][4] = energyLinkSideTexture;
-		BlockPowerConverter.textures[3][4] = energyLinkSideTexture;
-		BlockPowerConverter.textures[4][4] = energyLinkSideTexture;
-		BlockPowerConverter.textures[5][4] = energyLinkSideTexture;
-
-		BlockPowerConverter.textures[0][5] = defaultBottomTexture;
-		BlockPowerConverter.textures[1][5] = defaultTopTexture;
-		BlockPowerConverter.textures[2][5] = lavaFabricatorSideTexture;
-		BlockPowerConverter.textures[3][5] = lavaFabricatorSideTexture;
-		BlockPowerConverter.textures[4][5] = lavaFabricatorSideTexture;
-		BlockPowerConverter.textures[5][5] = lavaFabricatorSideTexture;
-
-		BlockPowerConverter.textures[0][6] = defaultBottomTexture;
-		BlockPowerConverter.textures[1][6] = geoMk2TopTexture_Off;
-		BlockPowerConverter.textures[2][6] = geoMk2SideTexture_Off_Disconnected;
-		BlockPowerConverter.textures[3][6] = geoMk2SideTexture_Off_Disconnected;
-		BlockPowerConverter.textures[4][6] = geoMk2SideTexture_Off_Disconnected;
-		BlockPowerConverter.textures[5][6] = geoMk2SideTexture_Off_Disconnected;
 	}
 	
 	public static Orientations getOrientationFromSide(int side)

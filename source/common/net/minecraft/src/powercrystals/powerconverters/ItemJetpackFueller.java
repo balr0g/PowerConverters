@@ -10,7 +10,7 @@ import net.minecraft.src.mod_IC2;
 import net.minecraft.src.buildcraft.factory.TileTank;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class ItemJetpackFueller extends Item// implements ITextureProvider
+public class ItemJetpackFueller extends Item implements ITextureProvider
 {
 	public ItemJetpackFueller(int i)
 	{
@@ -34,6 +34,10 @@ public class ItemJetpackFueller extends Item// implements ITextureProvider
 						int fuelToUse = (int)Math.ceil((double)s.getMaxDamage() - (double)s.getItemDamage());
 						int fuelUsed = tank.empty(fuelToUse, true);
 						s.damageItem(-(fuelUsed * PowerConverterCore.jetpackFuelRefilledPerFuelUnit), entityplayer);
+						if(s.getItemDamage() > s.getMaxDamage())
+						{
+							s.damageItem(s.getMaxDamage() - s.getItemDamage(), entityplayer);
+						}
 						return false;
 					}
 				}
@@ -42,10 +46,10 @@ public class ItemJetpackFueller extends Item// implements ITextureProvider
 		return false;
 	}
 	
-	//@Override
+	@Override
 	public String getTextureFile()
 	{
-		return null;
+		return PowerConverterCore.itemTexture;
 	}
 
 }

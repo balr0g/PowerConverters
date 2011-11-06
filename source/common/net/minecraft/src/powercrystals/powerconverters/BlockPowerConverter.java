@@ -18,8 +18,7 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 	// 4 - energy link
 	// 5 - lava fab
 	// 6 - geo mk2
-	
-	public static int[][] textures = new int[6][16];
+	// 7 - water strainer
 	
 	public BlockPowerConverter(int i)
 	{
@@ -31,7 +30,12 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 	@Override
 	public int getBlockTextureFromSideAndMetadata(int i, int j)
 	{
-		return textures[i][j];
+		if(j == 0) return PowerConverterCore.textureOffsetEngineGeneratorLV + i;
+		if(j == 1) return PowerConverterCore.textureOffsetEngineGeneratorMV + i;
+		if(j == 2) return PowerConverterCore.textureOffsetEngineGeneratorHV + i;
+		if(j == 3) return PowerConverterCore.textureOffsetOilFabricator + i;
+		if(j == 5) return PowerConverterCore.textureOffsetLavaFabricator + i;
+		return blockIndexInTexture;
 	}
 	
     public int getBlockTexture(IBlockAccess iblockaccess, int x, int y, int z, int side)
@@ -42,49 +46,51 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 		{
 			if(((TileEntityEnergyLink)te).isConnected(side))
 			{
-				return PowerConverterCore.energyLinkSideConnectedTexture;
+				return PowerConverterCore.textureOffsetEnergyLinkConnected + side;
 			}
 			else
 			{
-				return PowerConverterCore.energyLinkSideTexture;
+				return PowerConverterCore.textureOffsetEnergyLinkDisconnected + side;
 			}
 		}
 		else if(te != null && te instanceof TileEntityGeoMk2)
 		{
 			TileEntityGeoMk2 geo = ((TileEntityGeoMk2)te);
-			if(side == 0)
+			if(geo.isActive() && geo.isConnected(side))
 			{
-				return PowerConverterCore.defaultBottomTexture;
+				return PowerConverterCore.textureOffsetGeomk2OnConnected + side;
 			}
-			if(side == 1)
+			else if(geo.isActive())
 			{
-				if(geo.isActive())
-				{
-					return PowerConverterCore.geoMk2TopTexture_On;
-				}
-				else
-				{
-					return PowerConverterCore.geoMk2TopTexture_Off;
-				}
+				return PowerConverterCore.textureOffsetGeomk2OnDisconnected + side;
+			}
+			else if(!geo.isActive() && geo.isConnected(side))
+			{
+				return PowerConverterCore.textureOffsetGeomk2OffConnected + side;
 			}
 			else
 			{
-				if(geo.isActive() && geo.isConnected(side))
-				{
-					return PowerConverterCore.geoMk2SideTexture_On_Connected;
-				}
-				else if(geo.isActive())
-				{
-					return PowerConverterCore.geoMk2SideTexture_On_Disconnected;
-				}
-				else if(!geo.isActive() && geo.isConnected(side))
-				{
-					return PowerConverterCore.geoMk2SideTexture_Off_Connected;
-				}
-				else
-				{
-					return PowerConverterCore.geoMk2SideTexture_Off_Disconnected;
-				}
+				return PowerConverterCore.textureOffsetGeomk2OffDisconnected + side;
+			}
+		}
+		else if(te != null && te instanceof TileEntityWaterStrainer)
+		{
+			TileEntityWaterStrainer water = ((TileEntityWaterStrainer)te);
+			if(water.isActive() && water.isConnected(side))
+			{
+				return PowerConverterCore.textureOffsetWaterStrainerOnConnected + side;
+			}
+			else if(water.isActive())
+			{
+				return PowerConverterCore.textureOffsetWaterStrainerOnDisconnected + side;
+			}
+			else if(!water.isActive() && water.isConnected(side))
+			{
+				return PowerConverterCore.textureOffsetWaterStrainerOffConnected + side;
+			}
+			else
+			{
+				return PowerConverterCore.textureOffsetWaterStrainerOffDisconnected + side;
 			}
 		}
 		else

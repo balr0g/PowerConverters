@@ -9,12 +9,34 @@ import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.ic2.api.Direction;
 import net.minecraft.src.ic2.api.EnergyNet;
 import net.minecraft.src.ic2.api.IEnergySource;
+import net.minecraft.src.ic2.api.IEnergyTile;
 
 public class TileEntityWaterStrainer extends TileEntityPowerConverter implements IEnergySource, ILiquidContainer
 {
 	private int waterStored;
 	private int maxWaterStored = API.BUCKET_VOLUME * 5;
 	private int waterPulseSize = 5;
+	private boolean wasActive;
+	
+	public boolean isActive()
+	{
+		return waterStored >= waterPulseSize;
+	}
+	
+	// for network sync, client only
+	public void setWaterDirectly(int water)
+	{
+		waterStored = water;
+	}
+	
+	public boolean isConnected(int side)
+	{
+		BlockPosition p = new BlockPosition(this);
+		p.orientation = PowerConverterCore.getOrientationFromSide(side);
+		p.moveForwards(1);
+		TileEntity te = worldObj.getBlockTileEntity(p.x, p.y, p.z);
+		return (te != null && (te instanceof ILiquidContainer || te instanceof IEnergyTile));
+	}
 	
 	@Override
 	public void updateEntity()
@@ -25,7 +47,7 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
 			isAddedToEnergyNet = true;
 		}
-		/*if(wasActive != isActive())
+		if(wasActive != isActive())
 		{
 			worldObj.markBlocksDirty(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 			wasActive = isActive();
@@ -33,7 +55,7 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
 			{
 				PowerConverterCore.proxy.sendTileEntityPacket(this);
 			}
-		}*/
+		}
 		
 		int pulseSize = waterPulseSize * PowerConverterCore.euProducedPerWaterUnit;
 		
