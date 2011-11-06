@@ -117,6 +117,7 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 		if(md == 4) return new TileEntityEnergyLink();
 		if(md == 5) return new TileEntityLavaFabricator();
 		if(md == 6) return new TileEntityGeoMk2();
+		if(md == 7) return new TileEntityWaterStrainer();
 		return getBlockEntity();
 	}
 
@@ -150,6 +151,12 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 		
 		world.spawnParticle("smoke", x + xOffset, y + 1.1, z + zOffset, 0.0D, 0.0D, 0.0D);
 		world.spawnParticle("flame", x + xOffset, y + 1, z + zOffset, 0.0D, 0.0D, 0.0D);
+	}
+	
+	@Override
+	public boolean canProvidePower()
+	{
+		return true;
 	}
 	
 	@Override

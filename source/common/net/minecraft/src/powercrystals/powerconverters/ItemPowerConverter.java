@@ -37,6 +37,7 @@ public class ItemPowerConverter extends ItemBlock
 		if(md == 4) return "energyLink";
 		if(md == 5) return "lavaFabricator";
 		if(md == 6) return "geoMk2";
-		return "geoMk2";
+		if(md == 7) return "waterStrainer";
+		return "waterStrainer";
 	}
 }

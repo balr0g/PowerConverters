@@ -17,13 +17,16 @@ import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.8.1R1.1.1";
+	public static String version = "1.8.1R1.2.0";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	
 	public static Block powerConverterBlock;
 	
+	public static Item jetpackFuellerItem;
+	
 	public static Property powerConverterBlockId;
+	public static Property jetpackFuellerItemId;
 	
 	public static int defaultTopTexture = 0;
 	public static int defaultBottomTexture = 1;
@@ -48,6 +51,8 @@ public class PowerConverterCore
 	public static int oilUnitCostInEU;
 	public static int lavaUnitCostInEU;
 	public static int euProducedPerLavaUnit;
+	public static int euProducedPerWaterUnit;
+	public static int jetpackFuelRefilledPerFuelUnit;
 	
 	public static IPCProxy proxy;
 	
@@ -58,7 +63,9 @@ public class PowerConverterCore
 		
 		Configuration c = new Configuration(new File(proxy.getConfigPath()));
 		c.load();
+		
 		powerConverterBlockId = c.getOrCreateBlockIdProperty("ID.PowerConverter", 190);
+		jetpackFuellerItemId = c.getOrCreateIntProperty("ID.JetpackFueller", Configuration.ITEM_PROPERTY, 17900);
 		
 		Property bcToICScaleNumeratorProperty = c.getOrCreateIntProperty("Scale.BCtoIC.Numerator", Configuration.GENERAL_PROPERTY, 5);
 		Property bcToICScaleDenominatorProperty = c.getOrCreateIntProperty("Scale.BCtoIC.Denominator", Configuration.GENERAL_PROPERTY, 2);
@@ -70,10 +77,14 @@ public class PowerConverterCore
 		
 		Property oilCostEUProperty = c.getOrCreateIntProperty("Scale.OilCostInEU", Configuration.GENERAL_PROPERTY, 50);
 		oilCostEUProperty.comment = "One oil bucket is worth 20,000 BC MJ; there are 1000 units per bucket. Using the above ratio of 2.5 EUs per MJ, one 20 MJ unit is worth 50 EUs.";
-		Property lavaCostEUProperty = c.getOrCreateIntProperty("Scale.LavaCostInEU", Configuration.GENERAL_PROPERTY, 20);
-		lavaCostEUProperty.comment = "One lava bucket is worth 2000 BC MJ; there are 1000 units per bucket. However, BC's lava is worth way less than it should compared to IC's - an IC lava bucket is 20k EU (20 EU per unit), but a BC lava bucket is only 5k EU (5 EU per unit). The number is thus set for IC lava, as it's more expensive.";
-		Property euProducedPerLavaUnitProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerLavaUnit", Configuration.GENERAL_PROPERTY, 20);
+		Property lavaCostEUProperty = c.getOrCreateIntProperty("Scale.LavaCostInEU", Configuration.GENERAL_PROPERTY, 50);
+		lavaCostEUProperty.comment = "One lava bucket is worth 20,000 BC MJ; there are 1000 units per bucket. Using the above ratio of 2.5 EUs per MJ, one 20 MJ unit is worth 50 EUs. Note that lava is worth less (20EU per unit) in IC2 than in BC.";
+		Property euProducedPerLavaUnitProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerLavaUnit", Configuration.GENERAL_PROPERTY, 50);
 		euProducedPerLavaUnitProperty.comment = "See comments on the lava unit cost property. This number should probably match that one, but this is for how much power the geo mk2 produces.";
+		Property euProducedPerWaterUnitProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerWaterUnit", Configuration.GENERAL_PROPERTY, 1);
+		euProducedPerWaterUnitProperty.comment = "IC2's water generator produces 1000 EU per water bucket, or 1 EU per water unit. BC has no equivalent.";
+		Property jetpackFuelRefilledPerFuelUnitProperty = c.getOrCreateIntProperty("Scale.JetpackFuelFilledPerFuelUnit", Configuration.GENERAL_PROPERTY, 28);
+		jetpackFuelRefilledPerFuelUnitProperty.comment = "A jetpack is fully fuelled by 6 coalfuel cells, which are 4,000 EUs each, or 24000 EUs total. The Jetpack has 18,000 fuel units. Each unit is worth 1.33333... EUs. Each unit of fuel is worth 625 EUs. Thus, each unit of fuel is worth 38.4 EUs, or 28.8 slots, or 28 rounded down.";
 		
 		c.save();
 		
@@ -84,16 +95,21 @@ public class PowerConverterCore
 		oilUnitCostInEU = Integer.parseInt(oilCostEUProperty.value);
 		lavaUnitCostInEU = Integer.parseInt(lavaCostEUProperty.value);
 		euProducedPerLavaUnit = Integer.parseInt(euProducedPerLavaUnitProperty.value);
+		euProducedPerWaterUnit = Integer.parseInt(euProducedPerWaterUnitProperty.value);
+		jetpackFuelRefilledPerFuelUnit = Integer.parseInt(jetpackFuelRefilledPerFuelUnitProperty.value);
 		
 		powerConverterBlock = new BlockPowerConverter(Integer.parseInt(powerConverterBlockId.value));
 		
 		ModLoader.RegisterBlock(powerConverterBlock, ItemPowerConverter.class);
+		
+		jetpackFuellerItem = new ItemJetpackFueller(Integer.parseInt(jetpackFuellerItemId.value));
 		
 		ModLoader.RegisterTileEntity(TileEntityEngineGenerator.class, "EngineGenerator");
 		ModLoader.RegisterTileEntity(TileEntityOilFabricator.class, "OilFabricator");
 		ModLoader.RegisterTileEntity(TileEntityEnergyLink.class, "EnergyLink");
 		ModLoader.RegisterTileEntity(TileEntityLavaFabricator.class, "LavaFabricator");
 		ModLoader.RegisterTileEntity(TileEntityGeoMk2.class, "GeothermalMk2");
+		ModLoader.RegisterTileEntity(TileEntityWaterStrainer.class, "WaterStrainer");
 	}
 	
 	public static void afterModsLoaded()

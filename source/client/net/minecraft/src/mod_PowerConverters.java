@@ -19,6 +19,7 @@ public class mod_PowerConverters extends BaseModMp
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 4), "Energy Link");
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 5), "Lava Fabricator");
 		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 6), "Geothermal Generator Mk. 2");
+		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 7), "Water Strainer");
 	}
 	
 	@Override
