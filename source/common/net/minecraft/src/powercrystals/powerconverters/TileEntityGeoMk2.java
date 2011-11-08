@@ -55,6 +55,10 @@ public class TileEntityGeoMk2 extends TileEntityPowerConverter implements ILiqui
 	public void updateEntity()
 	{
 		super.updateEntity();
+		if(PowerConverterCore.proxy.isClient(worldObj))
+		{
+			return;
+		}
 		if(!isAddedToEnergyNet())
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);

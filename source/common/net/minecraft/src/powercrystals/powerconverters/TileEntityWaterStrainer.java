@@ -2,6 +2,7 @@ package net.minecraft.src.powercrystals.powerconverters;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.buildcraft.api.API;
 import net.minecraft.src.buildcraft.api.ILiquidContainer;
@@ -15,8 +16,18 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
 {
 	private int waterStored;
 	private int maxWaterStored = API.BUCKET_VOLUME * 5;
-	private int waterPulseSize = 5;
+	private int waterPulseSize;
+	private int euPulseSize;
+	private int waterConsumedForThisOutput;
 	private boolean wasActive;
+	
+	public TileEntityWaterStrainer()
+	{
+		waterPulseSize = 5;
+		euPulseSize = waterPulseSize * PowerConverterCore.euProducedPerWaterUnit;
+		waterConsumedForThisOutput = 0;
+		waterStored = 0;
+	}
 	
 	public boolean isActive()
 	{
@@ -38,10 +49,19 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
 		return (te != null && (te instanceof ILiquidContainer || te instanceof IEnergyTile));
 	}
 	
+	public Packet getDescriptionPacket()
+	{
+		return PowerConverterCore.proxy.getTileEntityPacket(this, new int[] { waterStored }, null, null);
+	}
+	
 	@Override
 	public void updateEntity()
 	{
 		super.updateEntity();
+		if(PowerConverterCore.proxy.isClient(worldObj))
+		{
+			return;
+		}
 		if(!isAddedToEnergyNet())
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
@@ -57,15 +77,16 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
 			}
 		}
 		
-		int pulseSize = waterPulseSize * PowerConverterCore.euProducedPerWaterUnit;
-		
-		if(waterStored > waterPulseSize)
+		if(waterStored >= waterPulseSize)
 		{
-			int powerNotTransmitted = EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, pulseSize);
-			if(powerNotTransmitted < pulseSize)
-			{
-				waterStored -= waterPulseSize;
-			}
+			waterStored -= waterPulseSize;
+			waterConsumedForThisOutput += waterPulseSize;
+		}
+		
+		if(waterConsumedForThisOutput >= PowerConverterCore.waterConsumedPerOutput * waterPulseSize)
+		{
+			EnergyNet.getForWorld(worldObj).emitEnergyFrom(this, euPulseSize);
+			waterConsumedForThisOutput = 0;
 		}
 		
 	}
@@ -75,6 +96,7 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
     {
 		super.readFromNBT(nbttagcompound);
 		waterStored = nbttagcompound.getInteger("waterStored");
+		waterConsumedForThisOutput = nbttagcompound.getInteger("waterConsumed");
     }
 	
 	@Override
@@ -82,6 +104,7 @@ public class TileEntityWaterStrainer extends TileEntityPowerConverter implements
     {
 		super.writeToNBT(nbttagcompound);
 		nbttagcompound.setInteger("waterStored", waterStored);
+		nbttagcompound.setInteger("waterConsumed", waterConsumedForThisOutput);
     }
 	
 	@Override

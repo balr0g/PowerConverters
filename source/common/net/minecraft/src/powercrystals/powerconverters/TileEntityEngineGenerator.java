@@ -42,6 +42,10 @@ public class TileEntityEngineGenerator extends TileEntityPowerConverter implemen
 	@Override
 	public void updateEntity()
 	{
+		if(PowerConverterCore.proxy.isClient(worldObj))
+		{
+			return;
+		}
 		getPowerProvider().update(this);
 		if(!isAddedToEnergyNet())
 		{
@@ -68,6 +72,7 @@ public class TileEntityEngineGenerator extends TileEntityPowerConverter implemen
 		storedPower = nbttagcompound.getInteger("storedPower");
 		maxStoredPower = nbttagcompound.getInteger("maxStoredPower");
 		pulseSize = nbttagcompound.getInteger("pulseSize");
+		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
 		setupPowerProvider();
     }
 	
@@ -78,6 +83,7 @@ public class TileEntityEngineGenerator extends TileEntityPowerConverter implemen
 		nbttagcompound.setInteger("storedPower", storedPower);
 		nbttagcompound.setInteger("maxStoredPower", maxStoredPower);
 		nbttagcompound.setInteger("pulseSize", pulseSize);
+		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
     }
 	
 	// IPowerReceptor methods

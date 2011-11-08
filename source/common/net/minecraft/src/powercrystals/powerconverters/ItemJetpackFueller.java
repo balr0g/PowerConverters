@@ -15,6 +15,7 @@ public class ItemJetpackFueller extends Item implements ITextureProvider
 	public ItemJetpackFueller(int i)
 	{
 		super(i);
+		setMaxStackSize(1);
 	}
 
 	@Override
@@ -31,13 +32,11 @@ public class ItemJetpackFueller extends Item implements ITextureProvider
 					ItemStack s = entityplayer.inventory.getStackInSlot(i);
 					if(s != null && s.itemID == mod_IC2.itemArmorJetpack.shiftedIndex)
 					{
-						int fuelToUse = (int)Math.ceil((double)s.getMaxDamage() - (double)s.getItemDamage());
+						int fuelToUse = s.getItemDamage() / PowerConverterCore.jetpackFuelRefilledPerFuelUnit;
 						int fuelUsed = tank.empty(fuelToUse, true);
-						s.damageItem(-(fuelUsed * PowerConverterCore.jetpackFuelRefilledPerFuelUnit), entityplayer);
-						if(s.getItemDamage() > s.getMaxDamage())
-						{
-							s.damageItem(s.getMaxDamage() - s.getItemDamage(), entityplayer);
-						}
+						int jetpackFuel = s.getMaxDamage() - fuelUsed * PowerConverterCore.jetpackFuelRefilledPerFuelUnit - (s.getMaxDamage() - s.getItemDamage());
+						ItemStack newjet = new ItemStack(mod_IC2.itemArmorJetpack, 1, jetpackFuel);
+						entityplayer.inventory.setInventorySlotContents(i, newjet);
 						return false;
 					}
 				}

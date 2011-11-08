@@ -27,6 +27,10 @@ public abstract class TileEntityLiquidFab extends TileEntityPowerConverter imple
 	@Override
 	public void updateEntity()
 	{
+		if(PowerConverterCore.proxy.isClient(worldObj))
+		{
+			return;
+		}
 		if(!isAddedToEnergyNet())
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);

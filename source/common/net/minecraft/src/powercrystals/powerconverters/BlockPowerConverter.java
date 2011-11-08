@@ -34,7 +34,10 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 		if(j == 1) return PowerConverterCore.textureOffsetEngineGeneratorMV + i;
 		if(j == 2) return PowerConverterCore.textureOffsetEngineGeneratorHV + i;
 		if(j == 3) return PowerConverterCore.textureOffsetOilFabricator + i;
+		if(j == 4) return PowerConverterCore.textureOffsetEnergyLinkDisconnected + i;
 		if(j == 5) return PowerConverterCore.textureOffsetLavaFabricator + i;
+		if(j == 6) return PowerConverterCore.textureOffsetGeomk2OffDisconnected + i;
+		if(j == 7) return PowerConverterCore.textureOffsetWaterStrainerOffDisconnected + i;
 		return blockIndexInTexture;
 	}
 	
@@ -142,21 +145,33 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 	public void randomDisplayTick(World world, int x, int y, int z, Random random)
 	{
 		int meta = world.getBlockMetadata(x, y, z);
-		if(meta != 6)
+		if(meta == 6)
 		{
-			return;
+			TileEntity te = world.getBlockTileEntity(x, y, z);
+			if(te == null || !(te instanceof TileEntityGeoMk2) || !((TileEntityGeoMk2)te).isActive())
+			{
+				return;
+			}
+			
+			float xOffset = random.nextFloat() * (10.0F/16.0F) + (3.0F/16.0F);
+			float zOffset = random.nextFloat() * (10.0F/16.0F) + (3.0F/16.0F);
+			
+			world.spawnParticle("smoke", x + xOffset, y + 1.1, z + zOffset, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle("flame", x + xOffset, y + 1, z + zOffset, 0.0D, 0.0D, 0.0D);
 		}
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		if(te == null || !(te instanceof TileEntityGeoMk2) || !((TileEntityGeoMk2)te).isActive())
+		else if(meta == 7)
 		{
-			return;
+			TileEntity te = world.getBlockTileEntity(x, y, z);
+			if(te == null || !(te instanceof TileEntityWaterStrainer) || !((TileEntityWaterStrainer)te).isActive())
+			{
+				return;
+			}
+			
+			float xOffset = random.nextFloat() * (10.0F/16.0F) + (3.0F/16.0F);
+			float zOffset = random.nextFloat() * (10.0F/16.0F) + (3.0F/16.0F);
+			
+			world.spawnParticle("splash", x + xOffset, y + 1.1, z + zOffset, 0.0D, 0.0D, 0.0D);
 		}
-		
-		float xOffset = random.nextFloat() * (10.0F/16.0F) + (3.0F/16.0F);
-		float zOffset = random.nextFloat() * (10.0F/16.0F) + (3.0F/16.0F);
-		
-		world.spawnParticle("smoke", x + xOffset, y + 1.1, z + zOffset, 0.0D, 0.0D, 0.0D);
-		world.spawnParticle("flame", x + xOffset, y + 1, z + zOffset, 0.0D, 0.0D, 0.0D);
 	}
 	
 	@Override

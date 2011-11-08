@@ -53,7 +53,11 @@ public class PowerConverterCore
 	public static int lavaUnitCostInEU;
 	public static int euProducedPerLavaUnit;
 	public static int euProducedPerWaterUnit;
+	public static int waterConsumedPerOutput;
 	public static int jetpackFuelRefilledPerFuelUnit;
+	
+	public static boolean enableFuelConversion;
+	public static boolean enableJetpackFueller;
 	
 	public static IPCProxy proxy;
 	
@@ -81,10 +85,17 @@ public class PowerConverterCore
 		lavaCostEUProperty.comment = "One lava bucket is worth 20,000 BC MJ; there are 1000 units per bucket. Using the above ratio of 2.5 EUs per MJ, one 20 MJ unit is worth 50 EUs. Note that lava is worth less (20EU per unit) in IC2 than in BC.";
 		Property euProducedPerLavaUnitProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerLavaUnit", Configuration.GENERAL_PROPERTY, 50);
 		euProducedPerLavaUnitProperty.comment = "See comments on the lava unit cost property. This number should probably match that one, but this is for how much power the geo mk2 produces.";
-		Property euProducedPerWaterUnitProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerWaterUnit", Configuration.GENERAL_PROPERTY, 1);
-		euProducedPerWaterUnitProperty.comment = "IC2's water generator produces 1000 EU per water bucket, or 1 EU per water unit. BC has no equivalent.";
-		Property jetpackFuelRefilledPerFuelUnitProperty = c.getOrCreateIntProperty("Scale.JetpackFuelFilledPerFuelUnit", Configuration.GENERAL_PROPERTY, 28);
-		jetpackFuelRefilledPerFuelUnitProperty.comment = "A jetpack is fully fuelled by 6 coalfuel cells, which are 4,000 EUs each, or 24000 EUs total. The Jetpack has 18,000 fuel units. Each unit is worth 1.33333... EUs. Each unit of fuel is worth 625 EUs. Thus, each unit of fuel is worth 38.4 EUs, or 28.8 slots, or 28 rounded down.";
+		Property waterConsumedPerOutputProperty = c.getOrCreateIntProperty("Scale.WaterConsumedPerTick", Configuration.GENERAL_PROPERTY, 2);
+		waterConsumedPerOutputProperty.comment = "Combines with Scale.EUGeneratedPerWaterOutput for the Water Strainer. This determines how much water is used per tick, to enable greater water consumption as you cannot go lower than 1 EU per water unit without going to 0. Note that the water strainer will only consume a constant amount of water per tick, so this will also throttle its output.";
+		Property euProducedPerWaterOutputProperty = c.getOrCreateIntProperty("Scale.EUGeneratedPerWaterOutput", Configuration.GENERAL_PROPERTY, 1);
+		euProducedPerWaterOutputProperty.comment = "IC2's water generator produces 1000 EU per water bucket, or 1 EU per water unit. BC has no equivalent.";
+		Property jetpackFuelRefilledPerFuelUnitProperty = c.getOrCreateIntProperty("Scale.JetpackFuelFilledPerFuelUnit", Configuration.GENERAL_PROPERTY, 468);
+		jetpackFuelRefilledPerFuelUnitProperty.comment = "A jetpack is fully fuelled by 6 coalfuel cells, which are 4,000 EUs each, or 24000 EUs total. The Jetpack has 18,000 fuel units. Each unit is worth 1.33333... EUs. Each unit of fuel is worth 625 EUs. Thus, each unit of BC fuel is worth 468.75 (ish) jetpack fuel units, or 468 rounded down.";
+		
+		Property enableJetpackFuellingItemProperty = c.getOrCreateBooleanProperty("Enable.JetpackFueller", Configuration.GENERAL_PROPERTY, true);
+		enableJetpackFuellingItemProperty.comment = "If false, the jetpack fueller item will be removed entirely.";
+		Property enableFuelConversionCraftingProperty = c.getOrCreateBooleanProperty("Enable.FuelConversionCrafting", Configuration.GENERAL_PROPERTY, true);
+		enableFuelConversionCraftingProperty.comment = "If true, you can craft a BC fuel bucket + IC empty fuel can into a filled IC fuel can. The reverse is not provided, as it would be a massive gain of energy.";
 		
 		c.save();
 		
@@ -95,14 +106,20 @@ public class PowerConverterCore
 		oilUnitCostInEU = Integer.parseInt(oilCostEUProperty.value);
 		lavaUnitCostInEU = Integer.parseInt(lavaCostEUProperty.value);
 		euProducedPerLavaUnit = Integer.parseInt(euProducedPerLavaUnitProperty.value);
-		euProducedPerWaterUnit = Integer.parseInt(euProducedPerWaterUnitProperty.value);
+		euProducedPerWaterUnit = Integer.parseInt(euProducedPerWaterOutputProperty.value);
+		waterConsumedPerOutput = Integer.parseInt(waterConsumedPerOutputProperty.value);
 		jetpackFuelRefilledPerFuelUnit = Integer.parseInt(jetpackFuelRefilledPerFuelUnitProperty.value);
+		enableFuelConversion = Boolean.parseBoolean(enableFuelConversionCraftingProperty.value);
+		enableJetpackFueller = Boolean.parseBoolean(enableJetpackFuellingItemProperty.value);
 		
 		powerConverterBlock = new BlockPowerConverter(Integer.parseInt(powerConverterBlockId.value));
 		
 		ModLoader.RegisterBlock(powerConverterBlock, ItemPowerConverter.class);
 		
-		jetpackFuellerItem = new ItemJetpackFueller(Integer.parseInt(jetpackFuellerItemId.value));
+		if(enableJetpackFueller)
+		{
+			jetpackFuellerItem = new ItemJetpackFueller(Integer.parseInt(jetpackFuellerItemId.value));
+		}
 		
 		ModLoader.RegisterTileEntity(TileEntityEngineGenerator.class, "EngineGenerator");
 		ModLoader.RegisterTileEntity(TileEntityOilFabricator.class, "OilFabricator");
@@ -179,12 +196,41 @@ public class PowerConverterCore
 				Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
   			}
   		);
+ 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 7), new Object[]
+  			{
+				"TWP",
+				Character.valueOf('T'), BuildCraftFactory.tankBlock,
+				Character.valueOf('W'), new ItemStack(mod_IC2.blockGenerator, 1, 2),
+				Character.valueOf('P'), BuildCraftTransport.pipeLiquidsIron
+  			}
+  		);
  		ModLoader.AddShapelessRecipe(new ItemStack(powerConverterBlock, 1, 6), new Object[]
 			{
 				new ItemStack(mod_IC2.blockGenerator, 1, 1),
 				BuildCraftFactory.tankBlock
 			}
 		);
+ 		
+ 		if(enableJetpackFueller)
+ 		{
+ 			ModLoader.AddRecipe(new ItemStack(jetpackFuellerItem), new Object[]
+ 				{
+ 					"WRS",
+ 					Character.valueOf('W'), BuildCraftTransport.pipeLiquidsWood,
+ 					Character.valueOf('R'), mod_IC2.itemRubber,
+ 					Character.valueOf('S'), Item.stick
+ 				}
+ 			);
+ 		}
+ 		if(enableFuelConversion)
+ 		{
+ 	 		ModLoader.AddShapelessRecipe(new ItemStack(mod_IC2.itemFuelCan), new Object[]
+    			{
+    				new ItemStack(mod_IC2.itemFuelCanEmpty),
+    				BuildCraftEnergy.bucketFuel
+    			}
+    		);
+ 		}
 	}
 	
 	public static Orientations getOrientationFromSide(int side)

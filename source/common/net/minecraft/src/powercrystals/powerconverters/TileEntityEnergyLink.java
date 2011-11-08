@@ -35,6 +35,10 @@ public class TileEntityEnergyLink extends TileEntityPowerConverter implements IE
 	@Override
 	public void updateEntity()
 	{
+		if(PowerConverterCore.proxy.isClient(worldObj))
+		{
+			return;
+		}
 		if(!isAddedToEnergyNet())
 		{
 			EnergyNet.getForWorld(worldObj).addTileEntity(this);
