@@ -15,6 +15,7 @@ public class ItemJetpackFueller extends Item implements ITextureProvider
 	public ItemJetpackFueller(int i)
 	{
 		super(i);
+		setItemName("jetpackFueller");
 		setMaxStackSize(1);
 	}
 

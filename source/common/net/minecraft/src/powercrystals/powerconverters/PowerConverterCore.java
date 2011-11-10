@@ -17,7 +17,7 @@ import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.8.1R1.2.0";
+	public static String version = "1.8.1R1.2.1";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	public static String itemTexture = "/PowerConverterSprites/items_0.png";
