@@ -4,8 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import net.minecraft.src.powercrystals.powerconverters.IPCProxy;
 import net.minecraft.src.powercrystals.powerconverters.PowerConverterCore;
-import net.minecraft.src.powercrystals.powerconverters.TileEntityGeoMk2;
-import net.minecraft.src.powercrystals.powerconverters.TileEntityWaterStrainer;
+import net.minecraft.src.powercrystals.powerconverters.TileEntityLiquidGenerator;
 
 public class mod_PowerConverters extends BaseModMp
 {
@@ -46,14 +45,9 @@ public class mod_PowerConverters extends BaseModMp
 	{
 		World w = ModLoader.getMinecraftInstance().theWorld;
 		TileEntity te = w.getBlockTileEntity(x, y, z);
-		if(te != null && te instanceof TileEntityGeoMk2)
+		if(te != null && te instanceof TileEntityLiquidGenerator)
 		{
-			((TileEntityGeoMk2)te).setStoredLiquid(ai[0]);
-			w.markBlocksDirty(x, y, z, x, y, z);
-		}
-		if(te != null && te instanceof TileEntityWaterStrainer)
-		{
-			((TileEntityWaterStrainer)te).setWaterDirectly(ai[0]);
+			((TileEntityLiquidGenerator)te).setStoredLiquid(ai[0]);
 			w.markBlocksDirty(x, y, z, x, y, z);
 		}
 	}

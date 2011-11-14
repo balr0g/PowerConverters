@@ -22,7 +22,7 @@ public class BlockPowerConverter extends BlockContainer implements ITextureProvi
 	
 	public BlockPowerConverter(int i)
 	{
-		super(i, 0, Material.circuits);
+		super(i, 0, Material.clay);
 		setHardness(1.0F);
 		setBlockName("powerConverter");
 	}

@@ -17,7 +17,7 @@ import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.8.1R1.2.1";
+	public static String version = "1.8.1R1.2.3";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	public static String itemTexture = "/PowerConverterSprites/items_0.png";
@@ -56,7 +56,18 @@ public class PowerConverterCore
 	public static int waterConsumedPerOutput;
 	public static int jetpackFuelRefilledPerFuelUnit;
 	
+	public static int euPerSecondLava;
+	public static int euPerSecondWater;
+	
 	public static boolean enableFuelConversion;
+	
+	public static boolean enableEngineGenerator;
+	public static boolean enableEnergyLink;
+	public static boolean enableLavaFab;
+	public static boolean enableOilFab;
+	public static boolean enableGeoMk2;
+	public static boolean enableWaterStrainer;
+	
 	public static boolean enableJetpackFueller;
 	
 	public static IPCProxy proxy;
@@ -79,6 +90,11 @@ public class PowerConverterCore
 		Property icToBCScaleDenominatorProperty = c.getOrCreateIntProperty("Scale.ICtoBC.Denominator", Configuration.GENERAL_PROPERTY, 5);
 		icToBCScaleDenominatorProperty.comment = "This by default is 2/5, the inverse of the BC to IC scale. Note that the Energy Link block has a currently unfixed bug which will add ~10% loss on top of this ratio.";
 		
+		Property euPerSecondLavaProperty = c.getOrCreateIntProperty("Rate.GeoMk2EUPerTick", Configuration.GENERAL_PROPERTY, 20);
+		euPerSecondLavaProperty.comment = "The EU/t output of the Geothermal Mk. 2.";
+		Property euPerSecondWaterProperty = c.getOrCreateIntProperty("Rate.WaterStrainerEUPerTick", Configuration.GENERAL_PROPERTY, 2);
+		euPerSecondWaterProperty.comment = "The EU/t output of the Water Strainer.";
+		
 		Property oilCostEUProperty = c.getOrCreateIntProperty("Scale.OilCostInEU", Configuration.GENERAL_PROPERTY, 50);
 		oilCostEUProperty.comment = "One oil bucket is worth 20,000 BC MJ; there are 1000 units per bucket. Using the above ratio of 2.5 EUs per MJ, one 20 MJ unit is worth 50 EUs.";
 		Property lavaCostEUProperty = c.getOrCreateIntProperty("Scale.LavaCostInEU", Configuration.GENERAL_PROPERTY, 50);
@@ -93,7 +109,13 @@ public class PowerConverterCore
 		jetpackFuelRefilledPerFuelUnitProperty.comment = "A jetpack is fully fuelled by 6 coalfuel cells, which are 4,000 EUs each, or 24000 EUs total. The Jetpack has 18,000 fuel units. Each unit is worth 1.33333... EUs. Each unit of fuel is worth 625 EUs. Thus, each unit of BC fuel is worth 468.75 (ish) jetpack fuel units, or 468 rounded down.";
 		
 		Property enableJetpackFuellingItemProperty = c.getOrCreateBooleanProperty("Enable.JetpackFueller", Configuration.GENERAL_PROPERTY, true);
-		enableJetpackFuellingItemProperty.comment = "If false, the jetpack fueller item will be removed entirely.";
+		Property enableEngineGeneratorProperty = c.getOrCreateBooleanProperty("Enable.EngineGenerator", Configuration.GENERAL_PROPERTY, true);
+		Property enableEnergyLinkProperty = c.getOrCreateBooleanProperty("Enable.EnergyLink", Configuration.GENERAL_PROPERTY, true);
+		Property enableLavaFabProperty = c.getOrCreateBooleanProperty("Enable.LavaFabricator", Configuration.GENERAL_PROPERTY, true);
+		Property enableOilFabProperty = c.getOrCreateBooleanProperty("Enable.OilFabricator", Configuration.GENERAL_PROPERTY, true);
+		Property enableGeoMk2Property = c.getOrCreateBooleanProperty("Enable.GeothermalMk2", Configuration.GENERAL_PROPERTY, true);
+		Property enableWaterStrainerProperty = c.getOrCreateBooleanProperty("Enable.WaterStrainer", Configuration.GENERAL_PROPERTY, true);
+		
 		Property enableFuelConversionCraftingProperty = c.getOrCreateBooleanProperty("Enable.FuelConversionCrafting", Configuration.GENERAL_PROPERTY, true);
 		enableFuelConversionCraftingProperty.comment = "If true, you can craft a BC fuel bucket + IC empty fuel can into a filled IC fuel can. The reverse is not provided, as it would be a massive gain of energy.";
 		
@@ -109,17 +131,25 @@ public class PowerConverterCore
 		euProducedPerWaterUnit = Integer.parseInt(euProducedPerWaterOutputProperty.value);
 		waterConsumedPerOutput = Integer.parseInt(waterConsumedPerOutputProperty.value);
 		jetpackFuelRefilledPerFuelUnit = Integer.parseInt(jetpackFuelRefilledPerFuelUnitProperty.value);
+		
+		euPerSecondLava = Integer.parseInt(euPerSecondLavaProperty.value);
+		euPerSecondWater = Integer.parseInt(euPerSecondWaterProperty.value);
+		
 		enableFuelConversion = Boolean.parseBoolean(enableFuelConversionCraftingProperty.value);
+		
 		enableJetpackFueller = Boolean.parseBoolean(enableJetpackFuellingItemProperty.value);
+		enableEngineGenerator = Boolean.parseBoolean(enableEngineGeneratorProperty.value);
+		enableEnergyLink = Boolean.parseBoolean(enableEnergyLinkProperty.value);
+		enableLavaFab = Boolean.parseBoolean(enableLavaFabProperty.value);
+		enableOilFab = Boolean.parseBoolean(enableOilFabProperty.value);
+		enableGeoMk2 = Boolean.parseBoolean(enableGeoMk2Property.value);
+		enableWaterStrainer = Boolean.parseBoolean(enableWaterStrainerProperty.value);
 		
 		powerConverterBlock = new BlockPowerConverter(Integer.parseInt(powerConverterBlockId.value));
 		
 		ModLoader.RegisterBlock(powerConverterBlock, ItemPowerConverter.class);
 		
-		if(enableJetpackFueller)
-		{
-			jetpackFuellerItem = new ItemJetpackFueller(Integer.parseInt(jetpackFuellerItemId.value));
-		}
+		jetpackFuellerItem = new ItemJetpackFueller(Integer.parseInt(jetpackFuellerItemId.value));
 		
 		ModLoader.RegisterTileEntity(TileEntityEngineGenerator.class, "EngineGenerator");
 		ModLoader.RegisterTileEntity(TileEntityOilFabricator.class, "OilFabricator");
@@ -136,80 +166,98 @@ public class PowerConverterCore
 		BuildCraftFactory.initialize();
 		BuildCraftTransport.initialize();
 		
-		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 0), new Object[]
-			{
-				"GEG", "RSR", "GDG",
-				Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 0),
-				Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 0),
-				Character.valueOf('G'), Item.ingotGold,
-				Character.valueOf('R'), Item.redstone,
-				Character.valueOf('D'), BuildCraftCore.ironGearItem
-			}
-		);
-		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 1), new Object[]
- 			{
-				"GEG", "RSR", "GDG",
-				Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 1),
-				Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 1),
-				Character.valueOf('G'), Item.ingotGold,
-				Character.valueOf('R'), Item.redstone,
-				Character.valueOf('D'), BuildCraftCore.goldGearItem
- 			}
- 		);
-		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 2), new Object[]
- 			{
-				"GEG", "RSR", "GDG",
-				Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 2),
-				Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 2),
-				Character.valueOf('G'), Item.ingotGold,
-				Character.valueOf('R'), Item.redstone,
-				Character.valueOf('D'), BuildCraftCore.diamondGearItem
- 			}
- 		);
- 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 3), new Object[]
-  			{
-				"LDL", "ATA", "LML",
-				Character.valueOf('L'), mod_IC2.itemPartAlloy,
-				Character.valueOf('D'), BuildCraftCore.diamondGearItem,
-				Character.valueOf('T'), Block.tnt,
-				Character.valueOf('A'), BuildCraftFactory.tankBlock,
-				Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
-  			}
-  		);
-		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 4), new Object[]
-  			{
-  				"ARA", "CRP", "GRG",
-  				Character.valueOf('A'), mod_IC2.itemPartAlloy,
-  				Character.valueOf('G'), BuildCraftCore.goldGearItem,
-  				Character.valueOf('C'), mod_IC2.itemCable,
-  				Character.valueOf('P'), BuildCraftTransport.pipePowerWood,
-  				Character.valueOf('R'), Item.redstone
-  			}
-  		);
- 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 5), new Object[]
-  			{
-				"LDL", "ATA", "LML",
-				Character.valueOf('L'), mod_IC2.itemPartAlloy,
-				Character.valueOf('D'), BuildCraftCore.goldGearItem,
-				Character.valueOf('T'), Block.stoneOvenIdle,
-				Character.valueOf('A'), BuildCraftFactory.tankBlock,
-				Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
-  			}
-  		);
- 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 7), new Object[]
-  			{
-				"TWP",
-				Character.valueOf('T'), BuildCraftFactory.tankBlock,
-				Character.valueOf('W'), new ItemStack(mod_IC2.blockGenerator, 1, 2),
-				Character.valueOf('P'), BuildCraftTransport.pipeLiquidsIron
-  			}
-  		);
- 		ModLoader.AddShapelessRecipe(new ItemStack(powerConverterBlock, 1, 6), new Object[]
-			{
-				new ItemStack(mod_IC2.blockGenerator, 1, 1),
-				BuildCraftFactory.tankBlock
-			}
-		);
+		if(enableEngineGenerator)
+		{
+			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 0), new Object[]
+				{
+					"GEG", "RSR", "GDG",
+					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 0),
+					Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 0),
+					Character.valueOf('G'), Item.ingotGold,
+					Character.valueOf('R'), Item.redstone,
+					Character.valueOf('D'), BuildCraftCore.ironGearItem
+				}
+			);
+			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 1), new Object[]
+	 			{
+					"GEG", "RSR", "GDG",
+					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 1),
+					Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 1),
+					Character.valueOf('G'), Item.ingotGold,
+					Character.valueOf('R'), Item.redstone,
+					Character.valueOf('D'), BuildCraftCore.goldGearItem
+	 			}
+	 		);
+			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 2), new Object[]
+	 			{
+					"GEG", "RSR", "GDG",
+					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 2),
+					Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 2),
+					Character.valueOf('G'), Item.ingotGold,
+					Character.valueOf('R'), Item.redstone,
+					Character.valueOf('D'), BuildCraftCore.diamondGearItem
+	 			}
+	 		);
+		}
+		if(enableOilFab)
+		{
+	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 3), new Object[]
+	  			{
+					"LDL", "ATA", "LML",
+					Character.valueOf('L'), mod_IC2.itemPartAlloy,
+					Character.valueOf('D'), BuildCraftCore.diamondGearItem,
+					Character.valueOf('T'), Block.tnt,
+					Character.valueOf('A'), BuildCraftFactory.tankBlock,
+					Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
+	  			}
+	  		);
+		}
+		if(enableEnergyLink)
+		{
+			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 4), new Object[]
+	  			{
+	  				"ARA", "CRP", "GRG",
+	  				Character.valueOf('A'), mod_IC2.itemPartAlloy,
+	  				Character.valueOf('G'), BuildCraftCore.goldGearItem,
+	  				Character.valueOf('C'), mod_IC2.itemCable,
+	  				Character.valueOf('P'), BuildCraftTransport.pipePowerWood,
+	  				Character.valueOf('R'), Item.redstone
+	  			}
+	  		);
+		}
+		if(enableLavaFab)
+		{
+	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 5), new Object[]
+	  			{
+					"LDL", "ATA", "LML",
+					Character.valueOf('L'), mod_IC2.itemPartAlloy,
+					Character.valueOf('D'), BuildCraftCore.goldGearItem,
+					Character.valueOf('T'), Block.stoneOvenIdle,
+					Character.valueOf('A'), BuildCraftFactory.tankBlock,
+					Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
+	  			}
+	  		);
+		}
+		if(enableWaterStrainer)
+		{
+	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 7), new Object[]
+	  			{
+					"TWP",
+					Character.valueOf('T'), BuildCraftFactory.tankBlock,
+					Character.valueOf('W'), new ItemStack(mod_IC2.blockGenerator, 1, 2),
+					Character.valueOf('P'), BuildCraftTransport.pipeLiquidsIron
+	  			}
+	  		);
+		}
+		if(enableGeoMk2)
+		{
+	 		ModLoader.AddShapelessRecipe(new ItemStack(powerConverterBlock, 1, 6), new Object[]
+				{
+					new ItemStack(mod_IC2.blockGenerator, 1, 1),
+					BuildCraftFactory.tankBlock
+				}
+			);
+		}
  		
  		if(enableJetpackFueller)
  		{
