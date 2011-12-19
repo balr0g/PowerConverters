@@ -17,7 +17,7 @@ import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.8.1R1.2.3";
+	public static String version = "1.0.0R1.3.0";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	public static String itemTexture = "/PowerConverterSprites/items_0.png";
@@ -55,6 +55,7 @@ public class PowerConverterCore
 	public static int euProducedPerWaterUnit;
 	public static int waterConsumedPerOutput;
 	public static int jetpackFuelRefilledPerFuelUnit;
+	public static int fuelCanDamageValue;
 	
 	public static int euPerSecondLava;
 	public static int euPerSecondWater;
@@ -118,6 +119,8 @@ public class PowerConverterCore
 		
 		Property enableFuelConversionCraftingProperty = c.getOrCreateBooleanProperty("Enable.FuelConversionCrafting", Configuration.GENERAL_PROPERTY, true);
 		enableFuelConversionCraftingProperty.comment = "If true, you can craft a BC fuel bucket + IC empty fuel can into a filled IC fuel can. The reverse is not provided, as it would be a massive gain of energy.";
+		Property fuelConversionValueProperty = c.getOrCreateIntProperty("Scale.CraftedFuelCanValue", Configuration.GENERAL_PROPERTY, 16000);
+		fuelConversionValueProperty.comment = "The value of a fuel can crafted from BC fuel buckets. There are 5 EUs per each unit of this setting. Note that as this is stored in the can's damage value, the maximum setting is 32767; settings above 16000 seem to not function correctly with IC2.";
 		
 		c.save();
 		
@@ -131,6 +134,7 @@ public class PowerConverterCore
 		euProducedPerWaterUnit = Integer.parseInt(euProducedPerWaterOutputProperty.value);
 		waterConsumedPerOutput = Integer.parseInt(waterConsumedPerOutputProperty.value);
 		jetpackFuelRefilledPerFuelUnit = Integer.parseInt(jetpackFuelRefilledPerFuelUnitProperty.value);
+		fuelCanDamageValue = Integer.parseInt(fuelConversionValueProperty.value);
 		
 		euPerSecondLava = Integer.parseInt(euPerSecondLavaProperty.value);
 		euPerSecondWater = Integer.parseInt(euPerSecondWaterProperty.value);
@@ -272,7 +276,7 @@ public class PowerConverterCore
  		}
  		if(enableFuelConversion)
  		{
- 	 		ModLoader.AddShapelessRecipe(new ItemStack(mod_IC2.itemFuelCan), new Object[]
+ 	 		ModLoader.AddShapelessRecipe(new ItemStack(mod_IC2.itemFuelCan, 1, fuelCanDamageValue), new Object[]
     			{
     				new ItemStack(mod_IC2.itemFuelCanEmpty),
     				BuildCraftEnergy.bucketFuel

@@ -1,13 +1,13 @@
 @ECHO OFF
 
-set MCP=%USERPROFILE%\mcp\1.8\dev
+set MCP=%USERPROFILE%\mcp\1.9\dev
 set BUILDSRC=%MCP%\src
 set CLEANSRC=%MCP%\src-dev
 
 set PROJBASE=%USERPROFILE%\Mod Stuff\Power Converters
 set SPRITEFOLDER=PowerConverterSprites
 set MODNAME=PowerConverters
-set MODVERSION=1.2.3
+set MODVERSION=1.3.0
 
 set ZIPPATH=%USERPROFILE%\Mod Stuff\zip.exe
 

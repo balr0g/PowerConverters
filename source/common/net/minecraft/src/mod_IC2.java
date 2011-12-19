@@ -160,10 +160,16 @@ public class mod_IC2 extends BaseMod {
 	  public static Item itemDustSilver;
 	
 	
-	@Override
-	public String Version() {
-		// TODO Auto-generated method stub
+	public String getVersion() {
 		return null;
+	}
+	
+	public String Version() {
+		return null;
+	}
+	
+	public void load()
+	{
 	}
 
 }

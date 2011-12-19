@@ -8,7 +8,7 @@ import net.minecraft.src.powercrystals.powerconverters.TileEntityLiquidGenerator
 
 public class mod_PowerConverters extends BaseModMp
 {
-	public mod_PowerConverters()
+	public void load()
 	{
 		PowerConverterCore.init(new ClientProxy());
 		
@@ -25,7 +25,7 @@ public class mod_PowerConverters extends BaseModMp
 	}
 	
 	@Override
-	public String Version()
+	public String getVersion()
 	{
 		return PowerConverterCore.version;
 	}
