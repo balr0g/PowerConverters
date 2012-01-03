@@ -30,6 +30,15 @@ public class mod_PowerConverters extends BaseModMp
 		return PowerConverterCore.version;
 	}
 	
+	/** This is to force Power Converters to load after the required mods, IC2 and BC2 + BC2 Energy.
+	  * Unfortunately this doesn't work with server-side MLMP.
+	  */
+	@Override
+	public String getPriorities()
+	{
+		return "after:mod_BuildCraftCore;after:mod_BuildCraftEnergy;after:mod_IC2";
+	}	
+	
 	@Override
 	public void ModsLoaded()
 	{
