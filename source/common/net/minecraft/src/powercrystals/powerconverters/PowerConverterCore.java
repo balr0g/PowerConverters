@@ -114,7 +114,7 @@ public class PowerConverterCore
 		Property enableEnergyLinkProperty = c.getOrCreateBooleanProperty("Enable.EnergyLink", Configuration.GENERAL_PROPERTY, true);
 		Property enableLavaFabProperty = c.getOrCreateBooleanProperty("Enable.LavaFabricator", Configuration.GENERAL_PROPERTY, true);
 		Property enableOilFabProperty = c.getOrCreateBooleanProperty("Enable.OilFabricator", Configuration.GENERAL_PROPERTY, true);
-		Property enableGeoMk2Property = c.getOrCreateBooleanProperty("Enable.GeothermalMk2", Configuration.GENERAL_PROPERTY, true);
+		Property enableGeoMk2Property = c.getOrCreateBooleanProperty("Enable.GeothermalMk2", Configuration.GENERAL_PROPERTY, false);
 		Property enableWaterStrainerProperty = c.getOrCreateBooleanProperty("Enable.WaterStrainer", Configuration.GENERAL_PROPERTY, true);
 		
 		Property enableFuelConversionCraftingProperty = c.getOrCreateBooleanProperty("Enable.FuelConversionCrafting", Configuration.GENERAL_PROPERTY, true);
