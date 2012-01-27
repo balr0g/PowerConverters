@@ -6,7 +6,7 @@ import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
-import net.minecraft.src.mod_IC2;
+import net.minecraft.src.ic2.api.Items;
 import net.minecraft.src.buildcraft.factory.TileTank;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -31,12 +31,13 @@ public class ItemJetpackFueller extends Item implements ITextureProvider
 				for(int i = 0; i < entityplayer.inventory.getSizeInventory(); i++)
 				{
 					ItemStack s = entityplayer.inventory.getStackInSlot(i);
-					if(s != null && s.itemID == mod_IC2.itemArmorJetpack.shiftedIndex)
+					if(s != null && s.itemID == Items.getItem("jetpack").getItem().shiftedIndex)
 					{
 						int fuelToUse = s.getItemDamage() / PowerConverterCore.jetpackFuelRefilledPerFuelUnit;
 						int fuelUsed = tank.empty(fuelToUse, true);
 						int jetpackFuel = s.getMaxDamage() - fuelUsed * PowerConverterCore.jetpackFuelRefilledPerFuelUnit - (s.getMaxDamage() - s.getItemDamage());
-						ItemStack newjet = new ItemStack(mod_IC2.itemArmorJetpack, 1, jetpackFuel);
+						ItemStack newjet = Items.getItem("jetpack").copy();
+						newjet.setItemDamage(jetpackFuel);
 						entityplayer.inventory.setInventorySlotContents(i, newjet);
 						return false;
 					}

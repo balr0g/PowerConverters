@@ -10,14 +10,14 @@ import net.minecraft.src.BuildCraftTransport;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.mod_IC2;
+import net.minecraft.src.ic2.api.Items;
 import net.minecraft.src.buildcraft.api.Orientations;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.0.0R1.3.0";
+	public static String version = "1.1.0R1.3.1";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	public static String itemTexture = "/PowerConverterSprites/items_0.png";
@@ -170,94 +170,109 @@ public class PowerConverterCore
 		BuildCraftFactory.initialize();
 		BuildCraftTransport.initialize();
 		
+		// Engine generators
 		if(enableEngineGenerator)
 		{
+			// LV engine generator
 			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 0), new Object[]
 				{
 					"GEG", "RSR", "GDG",
 					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 0),
-					Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 0),
+					Character.valueOf('S'), Items.getItem("lvTransformer"),
 					Character.valueOf('G'), Item.ingotGold,
 					Character.valueOf('R'), Item.redstone,
 					Character.valueOf('D'), BuildCraftCore.ironGearItem
 				}
 			);
+			
+			// MV engine generator
 			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 1), new Object[]
 	 			{
 					"GEG", "RSR", "GDG",
 					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 1),
-					Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 1),
+					Character.valueOf('S'), Items.getItem("mvTransformer"),
 					Character.valueOf('G'), Item.ingotGold,
 					Character.valueOf('R'), Item.redstone,
 					Character.valueOf('D'), BuildCraftCore.goldGearItem
 	 			}
 	 		);
+	 		
+	 		// HV engine generator
 			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 2), new Object[]
 	 			{
 					"GEG", "RSR", "GDG",
 					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 2),
-					Character.valueOf('S'), new ItemStack(mod_IC2.blockElectric, 1, 2),
+					Character.valueOf('S'), Items.getItem("hvTransformer"),
 					Character.valueOf('G'), Item.ingotGold,
 					Character.valueOf('R'), Item.redstone,
 					Character.valueOf('D'), BuildCraftCore.diamondGearItem
 	 			}
 	 		);
 		}
+		
+		// Oil fabricator
 		if(enableOilFab)
 		{
 	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 3), new Object[]
 	  			{
 					"LDL", "ATA", "LML",
-					Character.valueOf('L'), mod_IC2.itemPartAlloy,
+					Character.valueOf('L'), Items.getItem("advancedAlloy"),
 					Character.valueOf('D'), BuildCraftCore.diamondGearItem,
 					Character.valueOf('T'), Block.tnt,
 					Character.valueOf('A'), BuildCraftFactory.tankBlock,
-					Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
+					Character.valueOf('M'), Items.getItem("massFabricator"),
 	  			}
 	  		);
 		}
+		
+		// Energy link
 		if(enableEnergyLink)
 		{
 			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 4), new Object[]
 	  			{
 	  				"ARA", "CRP", "GRG",
-	  				Character.valueOf('A'), mod_IC2.itemPartAlloy,
+	  				Character.valueOf('A'), Items.getItem("advancedAlloy"),
 	  				Character.valueOf('G'), BuildCraftCore.goldGearItem,
-	  				Character.valueOf('C'), mod_IC2.itemCable,
+	  				Character.valueOf('C'), Items.getItem("insulatedCopperCableItem"),
 	  				Character.valueOf('P'), BuildCraftTransport.pipePowerWood,
 	  				Character.valueOf('R'), Item.redstone
 	  			}
 	  		);
 		}
+		
+		// Lava fabricator
 		if(enableLavaFab)
 		{
 	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 5), new Object[]
 	  			{
 					"LDL", "ATA", "LML",
-					Character.valueOf('L'), mod_IC2.itemPartAlloy,
+					Character.valueOf('L'), Items.getItem("advancedAlloy"),
 					Character.valueOf('D'), BuildCraftCore.goldGearItem,
 					Character.valueOf('T'), Block.stoneOvenIdle,
 					Character.valueOf('A'), BuildCraftFactory.tankBlock,
-					Character.valueOf('M'), new ItemStack(mod_IC2.blockMachine, 1, 14),
+					Character.valueOf('M'), Items.getItem("massFabricator"),
 	  			}
 	  		);
 		}
+		
+		// Water strainer
 		if(enableWaterStrainer)
 		{
 	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 7), new Object[]
 	  			{
 					"TWP",
 					Character.valueOf('T'), BuildCraftFactory.tankBlock,
-					Character.valueOf('W'), new ItemStack(mod_IC2.blockGenerator, 1, 2),
+					Character.valueOf('W'), Items.getItem("waterMill"),
 					Character.valueOf('P'), BuildCraftTransport.pipeLiquidsIron
 	  			}
 	  		);
 		}
+		// Geothermal MK2 -- ALREADY IN IC2 1.64
 		if(enableGeoMk2)
 		{
 	 		ModLoader.AddShapelessRecipe(new ItemStack(powerConverterBlock, 1, 6), new Object[]
 				{
-					new ItemStack(mod_IC2.blockGenerator, 1, 1),
+					Items.getItem("geothermalGenerator"),
 					BuildCraftFactory.tankBlock
 				}
 			);
@@ -269,16 +284,18 @@ public class PowerConverterCore
  				{
  					"WRS",
  					Character.valueOf('W'), BuildCraftTransport.pipeLiquidsWood,
- 					Character.valueOf('R'), mod_IC2.itemRubber,
+ 					Character.valueOf('R'), Items.getItem("rubber"),
  					Character.valueOf('S'), Item.stick
  				}
  			);
  		}
  		if(enableFuelConversion)
  		{
- 	 		ModLoader.AddShapelessRecipe(new ItemStack(mod_IC2.itemFuelCan, 1, fuelCanDamageValue), new Object[]
+	 		ItemStack newFuelCan = Items.getItem("filledFuelCan").copy();
+	 		newFuelCan.setItemDamage(fuelCanDamageValue);
+ 	 		ModLoader.AddShapelessRecipe(newFuelCan, new Object[]
     			{
-    				new ItemStack(mod_IC2.itemFuelCanEmpty),
+    				Items.getItem("fuelCan"),
     				BuildCraftEnergy.bucketFuel
     			}
     		);

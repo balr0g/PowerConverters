@@ -14,7 +14,7 @@ CLEANSRC=$MCP/src-dev
 
 SPRITEFOLDER=PowerConverterSprites
 MODNAME=PowerConverters
-MODVERSION=1.3.0
+MODVERSION=1.3.1
 ZIPPATH=`which zip`
 
 SRCBASE=$PROJBASE/source
@@ -54,7 +54,10 @@ cp -a $MCP/reobf/minecraft/* $RELEASECLIENT/
 cp -a $MCP/reobf/minecraft_server/* $RELEASESERVER/
 cp -a $PROJBASE/sprites $RELEASECLIENT/$SPRITEFOLDER
 rm -rf $RELEASECLIENT/buildcraft $RELEASECLIENT/net
+rm -rf $RELEASECLIENT/ic2 $RELEASECLIENT/BuildCraft* $RELEASECLIENT/mod_BuildCraft* $RELEASECLIENT/mod_IC2*
 rm -rf $RELEASESERVER/buildcraft $RELEASESERVER/net
+rm -rf $RELEASESERVER/ic2 $RELEASESERVER/BuildCraft* $RELEASESERVER/mod_BuildCraft* $RELEASESERVER/mod_IC2*
+
 
 cd $RELEASECLIENT
 $ZIPPATH -r -q $RELEASEBASE/"$MODNAME"_Client_"$MODVERSION".zip *

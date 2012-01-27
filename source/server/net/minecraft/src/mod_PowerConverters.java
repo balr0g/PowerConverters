@@ -14,10 +14,15 @@ public class mod_PowerConverters extends BaseModMp
 	}
 	
 	@Override
-	public String Version()
+	public String getVersion()
 	{
 		return PowerConverterCore.version;
 	}
+	@Override
+	public void load()
+	{
+	}
+
 	
 	@Override
 	public void ModsLoaded()

@@ -7,7 +7,7 @@ set CLEANSRC=%MCP%\src-dev
 set PROJBASE=%USERPROFILE%\Mod Stuff\Power Converters
 set SPRITEFOLDER=PowerConverterSprites
 set MODNAME=PowerConverters
-set MODVERSION=1.3.0
+set MODVERSION=1.3.1
 
 set ZIPPATH=%USERPROFILE%\Mod Stuff\zip.exe
 
