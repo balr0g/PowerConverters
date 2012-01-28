@@ -89,7 +89,7 @@ public class mod_PowerConverters extends BaseModMp
 		@Override
 		public boolean isClient(World world)
 		{
-			return world.multiplayerWorld;
+			return world.isRemote;
 		}
 
 		@Override

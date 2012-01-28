@@ -34,9 +34,7 @@ read
 mkdir -p $RELEASECLIENT
 mkdir -p $RELEASESERVER
 
-if [[ -z "${DEBUG}" ]]; then
-  rm -rf $BUILDSRC
-fi
+rm -rf $BUILDSRC
 cp -a $CLEANSRC $BUILDSRC
 cp -a $COMMONSRC $BUILDSRC/minecraft/
 cp -a $COMMONSRC $BUILDSRC/minecraft_server
