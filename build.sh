@@ -14,7 +14,7 @@ CLEANSRC=$MCP/src-dev
 
 SPRITEFOLDER=PowerConverterSprites
 MODNAME=PowerConverters
-MODVERSION=1.3.1
+MODVERSION=1.3.2
 ZIPPATH=`which zip`
 
 SRCBASE=$PROJBASE/source
