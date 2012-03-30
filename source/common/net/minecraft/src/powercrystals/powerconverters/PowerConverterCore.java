@@ -17,7 +17,7 @@ import net.minecraft.src.forge.Property;
 
 public class PowerConverterCore
 {
-	public static String version = "1.1.0R1.3.1";
+	public static String version = "1.2.3R1.3.2";
 	
 	public static String terrainTexture = "/PowerConverterSprites/terrain_0.png";
 	public static String itemTexture = "/PowerConverterSprites/items_0.png";
@@ -151,16 +151,16 @@ public class PowerConverterCore
 		
 		powerConverterBlock = new BlockPowerConverter(Integer.parseInt(powerConverterBlockId.value));
 		
-		ModLoader.RegisterBlock(powerConverterBlock, ItemPowerConverter.class);
+		ModLoader.registerBlock(powerConverterBlock, ItemPowerConverter.class);
 		
 		jetpackFuellerItem = new ItemJetpackFueller(Integer.parseInt(jetpackFuellerItemId.value));
 		
-		ModLoader.RegisterTileEntity(TileEntityEngineGenerator.class, "EngineGenerator");
-		ModLoader.RegisterTileEntity(TileEntityOilFabricator.class, "OilFabricator");
-		ModLoader.RegisterTileEntity(TileEntityEnergyLink.class, "EnergyLink");
-		ModLoader.RegisterTileEntity(TileEntityLavaFabricator.class, "LavaFabricator");
-		ModLoader.RegisterTileEntity(TileEntityGeoMk2.class, "GeothermalMk2");
-		ModLoader.RegisterTileEntity(TileEntityWaterStrainer.class, "WaterStrainer");
+		ModLoader.registerTileEntity(TileEntityEngineGenerator.class, "EngineGenerator");
+		ModLoader.registerTileEntity(TileEntityOilFabricator.class, "OilFabricator");
+		ModLoader.registerTileEntity(TileEntityEnergyLink.class, "EnergyLink");
+		ModLoader.registerTileEntity(TileEntityLavaFabricator.class, "LavaFabricator");
+		ModLoader.registerTileEntity(TileEntityGeoMk2.class, "GeothermalMk2");
+		ModLoader.registerTileEntity(TileEntityWaterStrainer.class, "WaterStrainer");
 	}
 	
 	public static void afterModsLoaded()
@@ -174,7 +174,7 @@ public class PowerConverterCore
 		if(enableEngineGenerator)
 		{
 			// LV engine generator
-			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 0), new Object[]
+			ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 0), new Object[]
 				{
 					"GEG", "RSR", "GDG",
 					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 0),
@@ -186,7 +186,7 @@ public class PowerConverterCore
 			);
 			
 			// MV engine generator
-			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 1), new Object[]
+			ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 1), new Object[]
 	 			{
 					"GEG", "RSR", "GDG",
 					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 1),
@@ -198,7 +198,7 @@ public class PowerConverterCore
 	 		);
 	 		
 	 		// HV engine generator
-			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 2), new Object[]
+			ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 2), new Object[]
 	 			{
 					"GEG", "RSR", "GDG",
 					Character.valueOf('E'), new ItemStack(BuildCraftEnergy.engineBlock, 1, 2),
@@ -213,7 +213,7 @@ public class PowerConverterCore
 		// Oil fabricator
 		if(enableOilFab)
 		{
-	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 3), new Object[]
+	 		ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 3), new Object[]
 	  			{
 					"LDL", "ATA", "LML",
 					Character.valueOf('L'), Items.getItem("advancedAlloy"),
@@ -228,7 +228,7 @@ public class PowerConverterCore
 		// Energy link
 		if(enableEnergyLink)
 		{
-			ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 4), new Object[]
+			ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 4), new Object[]
 	  			{
 	  				"ARA", "CRP", "GRG",
 	  				Character.valueOf('A'), Items.getItem("advancedAlloy"),
@@ -243,7 +243,7 @@ public class PowerConverterCore
 		// Lava fabricator
 		if(enableLavaFab)
 		{
-	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 5), new Object[]
+	 		ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 5), new Object[]
 	  			{
 					"LDL", "ATA", "LML",
 					Character.valueOf('L'), Items.getItem("advancedAlloy"),
@@ -258,7 +258,7 @@ public class PowerConverterCore
 		// Water strainer
 		if(enableWaterStrainer)
 		{
-	 		ModLoader.AddRecipe(new ItemStack(powerConverterBlock, 1, 7), new Object[]
+	 		ModLoader.addRecipe(new ItemStack(powerConverterBlock, 1, 7), new Object[]
 	  			{
 					"TWP",
 					Character.valueOf('T'), BuildCraftFactory.tankBlock,
@@ -270,7 +270,7 @@ public class PowerConverterCore
 		// Geothermal MK2 -- ALREADY IN IC2 1.64
 		if(enableGeoMk2)
 		{
-	 		ModLoader.AddShapelessRecipe(new ItemStack(powerConverterBlock, 1, 6), new Object[]
+	 		ModLoader.addShapelessRecipe(new ItemStack(powerConverterBlock, 1, 6), new Object[]
 				{
 					Items.getItem("geothermalGenerator"),
 					BuildCraftFactory.tankBlock
@@ -280,7 +280,7 @@ public class PowerConverterCore
  		
  		if(enableJetpackFueller)
  		{
- 			ModLoader.AddRecipe(new ItemStack(jetpackFuellerItem), new Object[]
+ 			ModLoader.addRecipe(new ItemStack(jetpackFuellerItem), new Object[]
  				{
  					"WRS",
  					Character.valueOf('W'), BuildCraftTransport.pipeLiquidsWood,
@@ -293,7 +293,7 @@ public class PowerConverterCore
  		{
 	 		ItemStack newFuelCan = Items.getItem("filledFuelCan").copy();
 	 		newFuelCan.setItemDamage(fuelCanDamageValue);
- 	 		ModLoader.AddShapelessRecipe(newFuelCan, new Object[]
+ 	 		ModLoader.addShapelessRecipe(newFuelCan, new Object[]
     			{
     				Items.getItem("fuelCan"),
     				BuildCraftEnergy.bucketFuel

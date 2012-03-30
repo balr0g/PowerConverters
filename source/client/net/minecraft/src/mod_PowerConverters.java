@@ -12,16 +12,16 @@ public class mod_PowerConverters extends BaseModMp
 	{
 		PowerConverterCore.init(new ClientProxy());
 		
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 0), "Engine Generator (LV)");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 1), "Engine Generator (MV)");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 2), "Engine Generator (HV)");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 3), "Oil Fabricator");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 4), "Energy Link");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 5), "Lava Fabricator");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 6), "Geothermal Generator Mk. 2");
-		ModLoader.AddName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 7), "Water Strainer");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 0), "Engine Generator (LV)");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 1), "Engine Generator (MV)");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 2), "Engine Generator (HV)");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 3), "Oil Fabricator");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 4), "Energy Link");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 5), "Lava Fabricator");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 6), "Geothermal Generator Mk. 2");
+		ModLoader.addName(new ItemStack(PowerConverterCore.powerConverterBlock, 1, 7), "Water Strainer");
 		
-		ModLoader.AddName(PowerConverterCore.jetpackFuellerItem, "Jetpack Fueller");
+		ModLoader.addName(PowerConverterCore.jetpackFuellerItem, "Jetpack Fueller");
 	}
 	
 	@Override
@@ -40,17 +40,14 @@ public class mod_PowerConverters extends BaseModMp
 	}	
 	
 	@Override
-	public void ModsLoaded()
+	public void modsLoaded()
 	{
 		PowerConverterCore.afterModsLoaded();
-		
 		MinecraftForgeClient.preloadTexture(PowerConverterCore.terrainTexture);
-		
-		ModLoaderMp.Init();
 	}
 	
 	@Override
-	public void HandleTileEntityPacket(int x, int y, int z, int l, int ai[], float af[], String as[])
+	public void handleTileEntityPacket(int x, int y, int z, int l, int ai[], float af[], String as[])
 	{
 		World w = ModLoader.getMinecraftInstance().theWorld;
 		TileEntity te = w.getBlockTileEntity(x, y, z);
